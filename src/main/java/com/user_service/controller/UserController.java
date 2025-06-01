@@ -3,7 +3,6 @@ package com.user_service.controller;
 import com.user_service.dto.CreateUserInput;
 import com.user_service.entity.User;
 import com.user_service.repository.UserRepository;
-import org.hibernate.annotations.Source;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -55,34 +54,4 @@ public class UserController {
     public Optional<User> __resolveReference(User user) {
         return userRepository.findById(user.getId());
     }
-
-    // Método especial para Apollo Federation (_entities query)
-    // Não é mais necessário um método explícito _entities com Spring for GraphQL 2.7+ e graphql-java-federation 2.x.
-    // A configuração correta (RuntimeWiringConfigurer) e as anotações @key são suficientes.
-    // Mas se precisar, seria algo como:
-    /*
-    @QueryMapping(name = "_entities")
-    public List<?> resolveEntities(@Argument List<Map<String, Object>> representations) {
-        return representations.stream()
-            .map(representation -> {
-                if ("User".equals(representation.get("__typename"))) {
-                    Object idObject = representation.get("id");
-                    if (idObject instanceof String) {
-                        try {
-                            UUID id = UUID.fromString((String) idObject);
-                            return userRepository.findById(id).orElse(null);
-                        } catch (IllegalArgumentException e) {
-                            // Log error, handle invalid UUID string
-                            return null;
-                        }
-                    } else if (idObject instanceof UUID) { // Se já for UUID
-                         return userRepository.findById((UUID) idObject).orElse(null);
-                    }
-                }
-                return null;
-            })
-            .filter(java.util.Objects::nonNull)
-            .collect(Collectors.toList());
-    }
-    */
 }

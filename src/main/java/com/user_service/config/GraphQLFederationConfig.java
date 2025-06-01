@@ -1,6 +1,5 @@
 package com.user_service.config;
 
-
 import com.apollographql.federation.graphqljava.Federation;
 import com.user_service.entity.User;
 import com.user_service.repository.UserRepository;
