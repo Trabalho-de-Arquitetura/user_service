@@ -51,7 +51,7 @@ public class UserController {
     // O API Gateway usará isso quando outro serviço referenciar um User
     // e precisar que o User Service resolva esse User a partir do ID.
     @SchemaMapping(typeName = "User", field = "id")
-    public Optional<User> __resolveReference(User user) {
-        return userRepository.findById(user.getId());
+    public Optional<UUID> __resolveReference(User user) {
+        return Optional.ofNullable(userRepository.findById(user.getId()).get().getId());
     }
 }
