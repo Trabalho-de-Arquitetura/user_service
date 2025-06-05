@@ -1,5 +1,3 @@
-scalar Date
-
 enum UserRole {
     ADMIN
     PROFESSOR
@@ -13,8 +11,8 @@ type User @key(fields: "id") {
     affiliatedSchool: String!
     password: String # pode esconder esse campo nas queries depois, ou omitir!
     role: UserRole!
-    createdAt: Date
-    updatedAt: Date
+    createdAt: String
+    updatedAt: String
 }
 
 input CreateUserInput {
