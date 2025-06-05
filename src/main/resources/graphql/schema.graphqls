@@ -1,53 +1,44 @@
+type UserDTO @key(fields: "id") {
+    id: ID!
+    name: String
+    email: String
+    password: String
+    affiliatedSchool: String
+    role: UserRole
+}
+
 enum UserRole {
     ADMIN
     PROFESSOR
     STUDENT
 }
 
-type User @key(fields: "id") {
-    id: ID!
-    name: String
-    email: String!
-    affiliatedSchool: String!
-    password: String # pode esconder esse campo nas queries depois, ou omitir!
-    role: UserRole!
-    createdAt: String
-    updatedAt: String
+type Query {
+    findUserById(id: ID!): UserDTO!
+    findUserByEmail(email: String!): UserDTO!
+    findUsersByRole(role: UserRole!): [UserDTO!]!
+    findAllUsers: [UserDTO!]!
 }
 
 input CreateUserInput {
     name: String!
     email: String!
-    affiliatedSchool: String!
     password: String!
+    affiliatedSchool: String!
     role: UserRole!
 }
 
 input UpdateUserInput {
-    name: String
-    email: String
-    affiliatedSchool: String
-    password: String
-    role: UserRole
-}
-
-type LoginReturnDTO {
-    user: User!
-    token: String!
-}
-
-type Query {
-    userById(id: ID!): User
-    userByEmail(email: String!): User
-    userByRole(role: UserRole!): [User]
-    allUsers: [User]
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    affiliatedSchool: String!
+    role: UserRole!
 }
 
 type Mutation {
-    createUser(input: CreateUserInput!): User
-    updateUser(id: ID!, input: UpdateUserInput!): User
-    deleteUser(id: ID!): User
-
-    login(email: String!, password: String!): LoginReturnDTO
-    changePassword(email: String!, password: String!, newPassword: String!): Boolean
+    saveUser(input: CreateUserInput!): UserDTO!
+    updateUser(input: UpdateUserInput!): UserDTO!
+    deleteUser(id: ID!): UserDTO!
 }
