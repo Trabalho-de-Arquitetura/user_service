@@ -6,12 +6,14 @@ public class CreateUserInput {
     public String name;
     public String email;
     public String affiliatedSchool;
+    public String password;
     public UserRole role;
 
-    public CreateUserInput(String name, String email, String affiliatedSchool, UserRole role) {
+    public CreateUserInput(String name, String email, String affiliatedSchool, String password, UserRole role) {
         this.name = name;
         this.email = email;
         this.affiliatedSchool = affiliatedSchool;
+        this.password = password;
         this.role = role;
     }
 
@@ -37,6 +39,14 @@ public class CreateUserInput {
 
     public void setAffiliatedSchool(String affiliatedSchool) {
         this.affiliatedSchool = affiliatedSchool;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public UserRole getRole() {
