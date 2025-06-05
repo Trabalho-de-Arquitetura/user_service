@@ -30,11 +30,11 @@ input CreateUserInput {
 
 input UpdateUserInput {
     id: ID!
-    name: String!
-    email: String!
-    password: String!
-    affiliatedSchool: String!
-    role: UserRole!
+    name: String
+    email: String
+    password: String
+    affiliatedSchool: String
+    role: UserRole
 }
 
 type Mutation {
