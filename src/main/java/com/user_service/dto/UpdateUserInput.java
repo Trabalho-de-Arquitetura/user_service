@@ -69,3 +69,4 @@ public class UpdateUserInput {
         this.role = role;
     }
 }
+
