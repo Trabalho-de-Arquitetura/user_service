@@ -61,23 +61,27 @@ public class UserController {
 
     @MutationMapping
     public User updateUser(@Argument UpdateUserInput input) {
-        User user = userRepository.findById(input.id).orElseThrow(()-> new RuntimeException("User not found"));
-        if (user.getName() != null) {
+        User user = userRepository.findById(input.id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (input.name != null) {
             user.setName(input.name);
         }
-        if (user.getEmail() != null) {
+        if (input.email != null) {
             user.setEmail(input.email);
         }
-        if (user.getAffiliatedSchool() != null) {
+        if (input.affiliatedSchool != null) {
             user.setAffiliatedSchool(input.affiliatedSchool);
         }
-        if (user.getPassword() != null) {
+        if (input.password != null) {
             String encryptedPassword = new BCryptPasswordEncoder().encode(input.password);
             user.setPassword(encryptedPassword);
         }
-        if (user.getRole() != null) {
+        if (input.role != null) {
             user.setRole(input.role);
         }
+
+
         return userRepository.save(user);
     }
 
