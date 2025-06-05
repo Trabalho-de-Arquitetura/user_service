@@ -2,6 +2,7 @@ type UserDTO @key(fields: "id") {
     id: ID!
     name: String
     email: String!
+    password: String!
     affiliatedSchool: String!
     role: UserRole!
 }
