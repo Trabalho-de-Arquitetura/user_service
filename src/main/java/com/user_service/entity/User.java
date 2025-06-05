@@ -20,17 +20,21 @@ public class User {
     @Column(nullable = false)
     private String affiliatedSchool;
 
+    @Column(nullable = false)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
     public User() {}
 
-    public User(UUID id, String name, String email, String affiliatedSchool, UserRole role) {
+    public User(UUID id, String name, String email, String affiliatedSchool, String password, UserRole role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.affiliatedSchool = affiliatedSchool;
+        this.password = password;
         this.role = role;
     }
 
@@ -42,6 +46,8 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public String getAffiliatedSchool() { return affiliatedSchool; }
     public void setAffiliatedSchool(String affiliatedSchool) { this.affiliatedSchool = affiliatedSchool; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }
 }

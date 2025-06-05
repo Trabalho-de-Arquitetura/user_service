@@ -1,4 +1,4 @@
-type User @key(fields: "id") {
+type UserDTO @key(fields: "id") {
     id: ID!
     name: String
     email: String!
@@ -13,18 +13,31 @@ enum UserRole {
 }
 
 type Query {
-    userById(id: ID!): User
-    userByEmail(email: String!): User
-    allUsers: [User]
+    findUserById(id: ID!): UserDTO!
+    findUserByEmail(email: String!): UserDTO!
+    findUserByRole(role: UserRole!): [UserDTO!]!
+    findAllUsers: [UserDTO!]!
 }
 
 input CreateUserInput {
     name: String!
     email: String!
+    password: String!
+    affiliatedSchool: String!
+    role: UserRole!
+}
+
+input UpdateUserInput {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
     affiliatedSchool: String!
     role: UserRole!
 }
 
 type Mutation {
-    createUser(input: CreateUserInput!): User
+    saveUser(input: CreateUserInput!): UserDTO!
+    updateUser(input: UpdateUserInput!): UserDTO!
+    deleteUser(id: ID!): UserDTO!
 }
