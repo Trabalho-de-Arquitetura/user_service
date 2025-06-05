@@ -2,14 +2,31 @@ package com.user_service.dto;
 
 import com.user_service.entity.UserRole;
 
+import java.util.UUID;
+
 public class UpdateUserInput {
+    public UUID id;
     public String name;
     public String email;
     public String affiliatedSchool;
     public String password;
     public UserRole role;
 
-    public UpdateUserInput() {
+    public UpdateUserInput(UUID id, String name, String email, String affiliatedSchool, String password, UserRole role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.affiliatedSchool = affiliatedSchool;
+        this.password = password;
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -51,6 +68,4 @@ public class UpdateUserInput {
     public void setRole(UserRole role) {
         this.role = role;
     }
-
-    // getters e setters
 }
