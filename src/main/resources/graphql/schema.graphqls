@@ -40,5 +40,5 @@ input UpdateUserInput {
 type Mutation {
     saveUser(input: CreateUserInput!): UserDTO!
     updateUser(input: UpdateUserInput!): UserDTO!
-    deleteUser(id: ID!): UserDTO!
+    deleteUser(id: ID!): Boolean!
 }

@@ -81,15 +81,16 @@ public class UserController {
             user.setRole(input.role);
         }
 
-
         return userRepository.save(user);
     }
 
     @MutationMapping
-    public User deleteUser(@Argument UUID id) {
-        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found"));
-        userRepository.delete(user);
-        return user;
+    public Boolean deleteUser(@Argument UUID id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.deleteById(id);
+        return true;
     }
 
     // SchemaMapping para resolver o tipo User para a federação
@@ -97,6 +98,7 @@ public class UserController {
     // e precisar que o User Service resolva esse User a partir do ID.
     @SchemaMapping(typeName = "UserDTO", field = "id")
     public Optional<UUID> __resolveReference(User user) {
-        return Optional.ofNullable(userRepository.findById(user.getId()).get().getId());
+        return userRepository.findById(user.getId())
+                .map(User::getId);
     }
 }
