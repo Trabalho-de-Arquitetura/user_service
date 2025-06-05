@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @QueryMapping
-    public User findUserByRole(@Argument UserRole role) {
+    public List<User> findUsersByRole(@Argument UserRole role) {
         return userRepository.findAllByRole(role);
     }
 
