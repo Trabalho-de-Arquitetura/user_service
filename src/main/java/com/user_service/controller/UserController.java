@@ -2,13 +2,14 @@ package com.user_service.controller;
 
 import com.user_service.dto.CreateUserInput;
 import com.user_service.dto.UpdateUserInput;
-import com.user_service.dto.LoginReturnDTO;
 import com.user_service.entity.User;
+import com.user_service.entity.UserRole;
 import com.user_service.repository.UserRepository;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -25,83 +26,73 @@ public class UserController {
     }
 
     @QueryMapping
-    public User userById(@Argument UUID id) {
+    public User findUserById(@Argument UUID id) {
         return userRepository.findById(id).orElse(null);
     }
 
     @QueryMapping
-    public User userByEmail(@Argument String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    public User findUserByEmail(@Argument String email) {
+        return userRepository.findByEmail(email);
     }
 
     @QueryMapping
-    public List<User> allUsers() {
+    public List<User> findUsersByRole(@Argument UserRole role) {
+        return userRepository.findAllByRole(role);
+    }
+
+    @QueryMapping
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    @QueryMapping
-    public List<User> userByRole(@Argument String role) {
-        return userRepository.findByRole(role);
-    }
-
     @MutationMapping
-    public User createUser(@Argument CreateUserInput input) {
+    public User saveUser(@Argument CreateUserInput input) {
         User user = new User();
         user.setName(input.name);
         user.setEmail(input.email);
         user.setAffiliatedSchool(input.affiliatedSchool);
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(input.password);
+
+        user.setPassword(encryptedPassword);
         user.setRole(input.role);
-        user.setPassword(input.password);
         return userRepository.save(user);
     }
 
     @MutationMapping
-    public User updateUser(@Argument UUID id, @Argument UpdateUserInput input) {
-        return userRepository.findById(id).map(user -> {
-            if (input.name != null) user.setName(input.name);
-            if (input.email != null) user.setEmail(input.email);
-            if (input.affiliatedSchool != null) user.setAffiliatedSchool(input.affiliatedSchool);
-            if (input.role != null) user.setRole(input.role);
-            if (input.password != null) user.setPassword(input.password);
-            return userRepository.save(user);
-        }).orElse(null);
+    public User updateUser(@Argument UpdateUserInput input) {
+        User user = userRepository.findById(input.id).orElseThrow(()-> new RuntimeException("User not found"));
+        if (user.getName() != null) {
+            user.setName(input.name);
+        }
+        if (user.getEmail() != null) {
+            user.setEmail(input.email);
+        }
+        if (user.getAffiliatedSchool() != null) {
+            user.setAffiliatedSchool(input.affiliatedSchool);
+        }
+        if (user.getPassword() != null) {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(input.password);
+            user.setPassword(encryptedPassword);
+        }
+        if (user.getRole() != null) {
+            user.setRole(input.role);
+        }
+        return userRepository.save(user);
     }
 
     @MutationMapping
     public User deleteUser(@Argument UUID id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        userOptional.ifPresent(userRepository::delete);
-        return userOptional.orElse(null);
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found"));
+        userRepository.delete(user);
+        return user;
     }
 
-    @MutationMapping
-    public LoginReturnDTO login(@Argument String email, @Argument String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getPassword().equals(password)) {
-                return new LoginReturnDTO(user, "fake-jwt-token");
-            }
-        }
-        throw new RuntimeException("Invalid credentials");
-    }
-
-    @MutationMapping
-    public Boolean changePassword(@Argument String email, @Argument String password, @Argument String newPassword) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getPassword().equals(password)) {
-                user.setPassword(newPassword);
-                userRepository.save(user);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @SchemaMapping(typeName = "User", field = "id")
-    public Optional<User> __resolveReference(User user) {
-        return userRepository.findById(user.getId());
+    // SchemaMapping para resolver o tipo User para a federação
+    // O API Gateway usará isso quando outro serviço referenciar um User
+    // e precisar que o User Service resolva esse User a partir do ID.
+    @SchemaMapping(typeName = "UserDTO", field = "id")
+    public Optional<UUID> __resolveReference(User user) {
+        return Optional.ofNullable(userRepository.findById(user.getId()).get().getId());
     }
 }
