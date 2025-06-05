@@ -1,10 +1,4 @@
-type User @key(fields: "id") {
-    id: ID!
-    name: String
-    email: String!
-    affiliatedSchool: String!
-    role: UserRole!
-}
+scalar Date
 
 enum UserRole {
     ADMIN
@@ -12,19 +6,50 @@ enum UserRole {
     STUDENT
 }
 
-type Query {
-    userById(id: ID!): User
-    userByEmail(email: String!): User
-    allUsers: [User]
+type User @key(fields: "id") {
+    id: ID!
+    name: String
+    email: String!
+    affiliatedSchool: String!
+    password: String # pode esconder esse campo nas queries depois, ou omitir!
+    role: UserRole!
+    createdAt: Date
+    updatedAt: Date
 }
 
 input CreateUserInput {
     name: String!
     email: String!
     affiliatedSchool: String!
+    password: String!
     role: UserRole!
+}
+
+input UpdateUserInput {
+    name: String
+    email: String
+    affiliatedSchool: String
+    password: String
+    role: UserRole
+}
+
+type LoginReturnDTO {
+    user: User!
+    token: String!
+}
+
+type Query {
+    userById(id: ID!): User
+    userByEmail(email: String!): User
+    userByRole(role: UserRole!): [User]
+    allUsers: [User]
 }
 
 type Mutation {
     createUser(input: CreateUserInput!): User
+    updateUser(id: ID!, input: UpdateUserInput!): User
+    deleteUser(id: ID!): User
+
+    login(email: String!, password: String!): LoginReturnDTO
+    changePassword(email: String!, password: String!, newPassword: String!): Boolean
 }
